@@ -1,0 +1,54 @@
+cat > .gitignore << 'EOF'
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# uv
+.uv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Data (keep structure, ignore actual files)
+data/synthetic/*.pdf
+data/synthetic/*.csv
+data/synthetic/*.xlsx
+data/synthetic/*.txt
+
+# Docker
+docker/volumes/
+EOF
