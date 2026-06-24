@@ -13,6 +13,8 @@ from qdrant_client.http.exceptions import UnexpectedResponse
 from qdrant_client.models import (
     Distance,
     VectorParams,
+    SparseVectorParams,
+    SparseIndexParams,
 )
 
 from app.core.config import AppSettings
@@ -75,61 +77,62 @@ class QdrantClientFactory:
             self._client = None
             logger.info("Qdrant client disconnected")
 
-    async def _ensure_collection(self) -> None:
-        """
-        Create the Qdrant collection if it does not already exist.
 
-        Idempotent — safe to call on every startup.
+async def _ensure_collection(self) -> None:
+    client = self._get_client()
+    collection_name = self._settings.qdrant_collection_name
 
-        Raises:
-            StorageError: If collection check or creation fails.
-        """
-        client = self._get_client()
-        collection_name = self._settings.qdrant_collection_name
+    try:
+        exists = await client.collection_exists(collection_name)
+    except UnexpectedResponse as exc:
+        raise StorageError(
+            message=f"Failed to check collection existence: {collection_name}",
+            detail=str(exc),
+        ) from exc
 
-        try:
-            exists = await client.collection_exists(collection_name)
-        except UnexpectedResponse as exc:
-            raise StorageError(
-                message=f"Failed to check collection existence: {collection_name}",
-                detail=str(exc),
-            ) from exc
+    if exists:
+        logger.info(
+            "Collection already exists — skipping creation",
+            extra={"collection": collection_name},
+        )
+        return
 
-        if exists:
-            logger.info(
-                "Collection already exists — skipping creation",
-                extra={"collection": collection_name},
-            )
-            return
-
-        try:
-            await client.create_collection(
-                collection_name=collection_name,
-                vectors_config=VectorParams(
-                    # [WHY] Size must match embedding model output dimension.
-                    # text-embedding-3-small = 1536. If you swap models,
-                    # update EMBEDDING_DIMENSION in .env — not here.
+    try:
+        await client.create_collection(
+            collection_name=collection_name,
+            # [WHY] Named vectors — "dense" for semantic search,
+            # "sparse" for keyword/BM25-style search.
+            # Both live in one collection, one query hits both.
+            vectors_config={
+                "dense": VectorParams(
                     size=self._settings.embedding_dimension,
                     distance=Distance.COSINE,
-                    # [WHY] on_disk=True — keeps vectors on disk not RAM.
-                    # Qdrant Cloud free tier has RAM limits.
-                    # For production with large collections this is mandatory.
                     on_disk=True,
                 ),
-            )
-            logger.info(
-                "Collection created",
-                extra={
-                    "collection": collection_name,
-                    "dimension": self._settings.embedding_dimension,
-                    "distance": "cosine",
-                },
-            )
-        except UnexpectedResponse as exc:
-            raise StorageError(
-                message=f"Failed to create collection: {collection_name}",
-                detail=str(exc),
-            ) from exc
+            },
+            sparse_vectors_config={
+                "sparse": SparseVectorParams(
+                    index=SparseIndexParams(
+                        # [WHY] on_disk=True keeps sparse index
+                        # off RAM — sparse vectors are large.
+                        on_disk=True,
+                    )
+                ),
+            },
+        )
+        logger.info(
+            "Collection created with dense + sparse vectors",
+            extra={
+                "collection": collection_name,
+                "dimension": self._settings.embedding_dimension,
+            },
+        )
+    except UnexpectedResponse as exc:
+        raise StorageError(
+            message=f"Failed to create collection: {collection_name}",
+            detail=str(exc),
+        ) from exc
+    
 
     def get_client(self) -> AsyncQdrantClient:
         """
