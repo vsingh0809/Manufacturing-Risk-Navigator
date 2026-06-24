@@ -19,6 +19,11 @@ from app.services.ingestion.cleaner import DocumentCleaner
 from app.services.ingestion.deduplicator import DocumentDeduplicator
 from app.services.ingestion.embedder import DocumentEmbedder
 from extractors.registry import ExtractorRegistry
+# ADD import at top
+from fastembed import SparseTextEmbedding
+from qdrant_client.models import PointStruct, SparseVector
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +52,7 @@ class IngestionPipeline:
         self._chunker = chunker
         self._embedder = embedder
         self._qdrant = qdrant
+        self._sparse_model = SparseTextEmbedding(model_name="prithivida/Splade_PP_en_v1")
         self._collection_name = collection_name
 
     async def ingest(
@@ -161,23 +167,33 @@ class IngestionPipeline:
             ) from exc
 
         # ── Stage 5: Upsert to Qdrant ──────────────────────────────────────
-        points = [
-            PointStruct(
-                id=chunk.chunk_id,
-                vector=vector,
-                # [WHY] Full metadata stored as payload so retrieval
-                # results are self-contained — no secondary DB lookup.
-                payload={
-                    "chunk_id": chunk.chunk_id,
-                    "document_id": chunk.document_id,
-                    "content": chunk.content,
-                    "chunk_index": chunk.chunk_index,
-                    "token_count": chunk.token_count,
-                    **chunk.metadata.model_dump(mode="json"),
-                },
-            )
-            for chunk, vector in embedded
-        ]
+        points = []
+        for chunk, dense_vector in embedded:
+         
+          # [WHY] Generate sparse vector per chunk at upsert time.
+          # Stored alongside dense vector in the same Qdrant point.
+          sparse = next(self._sparse_model.embed([chunk.content]))
+
+          points.append(
+          PointStruct(
+            id=chunk.chunk_id,
+            vector={
+                "dense": dense_vector,
+                "sparse": SparseVector(
+                    indices=sparse.indices.tolist(),
+                    values=sparse.values.tolist(),
+                ),
+            },
+            payload={
+                "chunk_id": chunk.chunk_id,
+                "document_id": chunk.document_id,
+                "content": chunk.content,
+                "chunk_index": chunk.chunk_index,
+                "token_count": chunk.token_count,
+                **chunk.metadata.model_dump(mode="json"),
+            },
+        )
+    )       
 
         try:
             await self._qdrant.upsert(
