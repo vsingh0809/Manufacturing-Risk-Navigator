@@ -7,8 +7,9 @@ risk and dependency nodes.
 
 import logging
 from functools import partial
+from langchain_core.language_models import BaseChatModel
 
-from langchain_openai import AzureChatOpenAI
+
 from langgraph.graph import END, START, StateGraph
 
 from app.core.config import AppSettings
@@ -27,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 def build_graph(
     retriever: HybridRetriever,
-    llm: AzureChatOpenAI,
+    llm: BaseChatModel,
     settings: AppSettings,
 ):
     """

@@ -14,7 +14,7 @@ from typing import Any
 
 import tiktoken
 from langchain_core.messages import HumanMessage
-from langchain_openai import AzureChatOpenAI
+from langchain_core.language_models import BaseChatModel
 
 from app.core.config import AppSettings
 from app.core.exceptions import AgentError, ContextWindowError
@@ -112,7 +112,7 @@ def _accumulate_tokens(
 
 
 async def _call_llm_json(
-    llm: AzureChatOpenAI,
+    llm: BaseChatModel,
     prompt: str,
 ) -> tuple[Any, int, int]:
     """
@@ -198,7 +198,7 @@ async def retrieve_node(
 
 async def risk_node(
     state: AgentState,
-    llm: AzureChatOpenAI,
+    llm: BaseChatModel,
 ) -> dict:
     """
     Node 2a (parallel): Identify risks from retrieved chunks.
@@ -244,7 +244,7 @@ async def risk_node(
 
 async def dependency_node(
     state: AgentState,
-    llm: AzureChatOpenAI,
+    llm: BaseChatModel,
 ) -> dict:
     """
     Node 2b (parallel): Extract dependency edges from retrieved chunks.
@@ -290,7 +290,7 @@ async def dependency_node(
 
 async def timeline_node(
     state: AgentState,
-    llm: AzureChatOpenAI,
+    llm: BaseChatModel,
 ) -> dict:
     """
     Node 3: Infer milestone status using risks + dependencies.
@@ -345,7 +345,7 @@ async def timeline_node(
 
 async def summarise_node(
     state: AgentState,
-    llm: AzureChatOpenAI,
+    llm: BaseChatModel,
 ) -> dict:
     """
     Node 4: Generate grounded executive summary narrative.
