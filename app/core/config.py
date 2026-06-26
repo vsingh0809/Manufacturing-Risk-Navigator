@@ -29,13 +29,25 @@ class AppSettings(BaseSettings):
     app_port: int = Field(default=8000, description="Uvicorn bind port")
     log_level: str = Field(default="INFO", description="Python logging level")
 
-    # ── OpenAI ────────────────────────────────────────────────────────────────
-    azure_openai_api_key: str = Field(..., description="Azure OpenAI API key")
-    azure_openai_endpoint: str = Field(..., description="Azure OpenAI endpoint URL")
-    azure_openai_api_version: str = Field(default="2024-02-01", description="Azure OpenAI API version")
-    azure_openai_embedding_deployment: str = Field(default="text-embedding-3-small", description="Azure embedding deployment name")
-    azure_openai_chat_deployment: str = Field(default="gpt-4o-mini", description="Azure chat deployment name")
+    groq_api_key: str = Field(..., description="Groq API key")
+    groq_model: str = Field(
+    default="llama-3.1-8b-instant",
+    description="Groq model name"
+    )
+    embedding_model: str = Field(
+    default="BAAI/bge-small-en-v1.5",
+    description="HuggingFace embedding model"
+     )
+    
+    embedding_dimension: int = Field(
+    default=768,
+    description="BGE-small output dimension"
+)
 
+
+
+
+   
     # ── Qdrant ────────────────────────────────────────────────────────────────
     qdrant_url: str = Field(..., description="Qdrant Cloud cluster URL")
     qdrant_api_key: str = Field(..., description="Qdrant Cloud API key")
