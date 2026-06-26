@@ -20,7 +20,9 @@ from app.core.config import get_settings
 from app.core.exceptions import MRNBaseError
 from app.core.logging import setup_logging
 from app.dependencies import initialise_services, shutdown_services
-
+from app.core.tracing import setup_tracing
+from app.core.observability import RequestTracingMiddleware, get_prometheus_metrics
+from fastapi.responses import PlainTextResponse
 logger = logging.getLogger(__name__)
 
 
@@ -37,6 +39,7 @@ async def lifespan(app: FastAPI):
     """
     settings = get_settings()
     setup_logging(settings.log_level)
+    setup_tracing(service_name="manufacturing-risk-navigator")
 
     logger.info(
         "Starting Manufacturing Risk Navigator",
@@ -81,8 +84,19 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    app.add_middleware(RequestTracingMiddleware)
+
     # ── Routers ────────────────────────────────────────────────────────────
     app.include_router(v1_router)
+
+    @app.get("/metrics", include_in_schema=False)
+    async def metrics() -> PlainTextResponse:
+      
+      """Prometheus metrics scrape endpoint."""
+      return PlainTextResponse(
+        content=get_prometheus_metrics().decode("utf-8"),
+        media_type="text/plain",
+    )
 
     # ── Global Exception Handlers ──────────────────────────────────────────
     @app.exception_handler(MRNBaseError)
