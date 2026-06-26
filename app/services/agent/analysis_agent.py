@@ -8,8 +8,7 @@ and converts final state into a typed RiskReport.
 import logging
 import uuid
 from datetime import UTC, datetime
-
-from langchain_openai import AzureChatOpenAI
+from langchain_core.language_models import BaseChatModel
 
 from app.core.config import AppSettings
 from app.core.exceptions import AgentError
@@ -32,19 +31,13 @@ class AnalysisAgent:
     def __init__(
         self,
         retriever: HybridRetriever,
+        llm: BaseChatModel,
         settings: AppSettings,
     ) -> None:
         # [WHY] LLM initialised once here — not per request.
         # AzureChatOpenAI connection pool is reused across calls.
         try:
-            self._llm = AzureChatOpenAI(
-                azure_deployment=settings.azure_openai_chat_deployment,
-                azure_endpoint=settings.azure_openai_endpoint,
-                api_key=settings.azure_openai_api_key,
-                api_version=settings.azure_openai_api_version,
-                temperature=0,        # [WHY] 0 = deterministic JSON output
-                max_tokens=2048,
-            )
+            self._llm = llm
         except Exception as exc:
             raise AgentError(
                 message="Failed to initialise AzureChatOpenAI",

@@ -7,9 +7,9 @@ Qdrant upsert is handled by the direct client — not LangChain.
 
 import logging
 
-from langchain_openai import AzureOpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.embeddings import Embeddings
 
-from app.core.config import AppSettings
 from app.core.exceptions import EmbeddingError
 from app.models.document import ChunkedDocument
 
@@ -24,16 +24,12 @@ class DocumentEmbedder:
     Returns (ChunkedDocument, embedding) pairs — pipeline handles upsert.
     """
 
-    def __init__(self, settings: AppSettings) -> None:
+    def __init__(self,embeddings: Embeddings ) -> None:
         # [WHY] LangChain embeddings initialised once — reuses HTTP
         # connection pool across all embed calls in a request.
         try:
-            self._embeddings = AzureOpenAIEmbeddings(
-    azure_deployment=settings.azure_openai_embedding_deployment,
-    azure_endpoint=settings.azure_openai_endpoint,
-    api_key=settings.azure_openai_api_key,
-    api_version=settings.azure_openai_api_version,
-)
+            self._embeddings = embeddings
+            
         except Exception as exc:
             raise EmbeddingError(
                 message="Failed to initialise OpenAI embeddings client",

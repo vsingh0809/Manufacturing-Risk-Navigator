@@ -1,0 +1,67 @@
+"""
+Search API endpoints.
+
+POST /search → hybrid search over ingested documents
+"""
+
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException, status
+
+from app.core.exceptions import RetrievalError, VectorStoreError
+from app.dependencies import get_hybrid_retriever
+from app.models.search import HybridResult, SearchQuery
+from app.services.retrieval.vector_store import HybridRetriever
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/search", tags=["search"])
+
+
+@router.post("", response_model=HybridResult)
+async def hybrid_search(
+    query: SearchQuery,
+    retriever: HybridRetriever = Depends(get_hybrid_retriever),
+) -> HybridResult:
+    """
+    Execute hybrid search over ingested project documents.
+
+    Combines dense semantic search + sparse SPLADE search
+    with Qdrant native RRF fusion and optional cross-encoder reranking.
+
+    Args:
+        query: SearchQuery with text, optional filters, top_k, rerank flag.
+
+    Returns:
+        HybridResult with ranked results and latency metadata.
+    """
+    logger.info(
+        "Search request received",
+        extra={
+            "query": query.query,
+            "project_name": query.project_name,
+            "top_k": query.top_k,
+            "rerank": query.rerank,
+        },
+    )
+
+    try:
+        result = await retriever.search(query)
+    except VectorStoreError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=exc.message,
+        )
+    except RetrievalError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=exc.message,
+        )
+    except Exception as exc:
+        logger.error("Unexpected search error", extra={"error": str(exc)})
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Search failed unexpectedly",
+        )
+
+    return result

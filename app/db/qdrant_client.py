@@ -78,60 +78,7 @@ class QdrantClientFactory:
             logger.info("Qdrant client disconnected")
 
 
-async def _ensure_collection(self) -> None:
-    client = self._get_client()
-    collection_name = self._settings.qdrant_collection_name
 
-    try:
-        exists = await client.collection_exists(collection_name)
-    except UnexpectedResponse as exc:
-        raise StorageError(
-            message=f"Failed to check collection existence: {collection_name}",
-            detail=str(exc),
-        ) from exc
-
-    if exists:
-        logger.info(
-            "Collection already exists — skipping creation",
-            extra={"collection": collection_name},
-        )
-        return
-
-    try:
-        await client.create_collection(
-            collection_name=collection_name,
-            # [WHY] Named vectors — "dense" for semantic search,
-            # "sparse" for keyword/BM25-style search.
-            # Both live in one collection, one query hits both.
-            vectors_config={
-                "dense": VectorParams(
-                    size=self._settings.embedding_dimension,
-                    distance=Distance.COSINE,
-                    on_disk=True,
-                ),
-            },
-            sparse_vectors_config={
-                "sparse": SparseVectorParams(
-                    index=SparseIndexParams(
-                        # [WHY] on_disk=True keeps sparse index
-                        # off RAM — sparse vectors are large.
-                        on_disk=True,
-                    )
-                ),
-            },
-        )
-        logger.info(
-            "Collection created with dense + sparse vectors",
-            extra={
-                "collection": collection_name,
-                "dimension": self._settings.embedding_dimension,
-            },
-        )
-    except UnexpectedResponse as exc:
-        raise StorageError(
-            message=f"Failed to create collection: {collection_name}",
-            detail=str(exc),
-        ) from exc
     
 
     def get_client(self) -> AsyncQdrantClient:
@@ -161,3 +108,66 @@ async def _ensure_collection(self) -> None:
                 detail="Call QdrantClientFactory.connect() during app startup",
             )
         return self._client
+    
+    async def _ensure_collection(self) -> None:
+       
+       client = self._get_client()
+       collection_name = self._settings.qdrant_collection_name
+
+       try:
+        exists = await client.collection_exists(collection_name)
+       except UnexpectedResponse as exc:
+        raise StorageError(
+            message=f"Failed to check collection existence: {collection_name}",
+            detail=str(exc),
+        ) from exc
+       
+       if exists:
+        logger.info(
+            "Collection already exists — skipping creation",
+            extra={"collection": collection_name},
+        )
+        return
+       
+       try:
+
+        await client.create_collection(
+            collection_name=collection_name,
+            # [WHY] Named vectors — "dense" for semantic search,
+            # "sparse" for keyword/BM25-style search.
+            # Both live in one collection, one query hits both.
+            vectors_config={
+                "dense": VectorParams(
+                    size=self._settings.embedding_dimension,
+                    distance=Distance.COSINE,
+                    on_disk=True,
+                ),
+            },
+            sparse_vectors_config={
+                "sparse": SparseVectorParams(
+                    index=SparseIndexParams(
+                        # [WHY] on_disk=True keeps sparse index
+                        # off RAM — sparse vectors are large.
+                        on_disk=True,
+                    )
+                ),
+            },
+        )
+        logger.info(
+            "Collection created with dense + sparse vectors",
+            extra={
+                "collection": collection_name,
+                "dimension": self._settings.embedding_dimension,
+            },
+        )
+       except UnexpectedResponse as exc:
+        raise StorageError(
+            message=f"Failed to create collection: {collection_name}",
+            detail=str(exc),
+        ) from exc
+
+    
+
+    
+
+    
