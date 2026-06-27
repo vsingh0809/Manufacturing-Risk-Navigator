@@ -1,9 +1,4 @@
-"""
-Search API endpoints.
-
-POST /search → hybrid search over ingested documents
-"""
-
+import time
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -25,15 +20,6 @@ async def hybrid_search(
 ) -> HybridResult:
     """
     Execute hybrid search over ingested project documents.
-
-    Combines dense semantic search + sparse SPLADE search
-    with Qdrant native RRF fusion and optional cross-encoder reranking.
-
-    Args:
-        query: SearchQuery with text, optional filters, top_k, rerank flag.
-
-    Returns:
-        HybridResult with ranked results and latency metadata.
     """
     logger.info(
         "Search request received",
@@ -45,8 +31,12 @@ async def hybrid_search(
         },
     )
 
+    # 1. Start the timer for latency tracking
+    start_time = time.perf_counter()
+
     try:
-        result = await retriever.search(query)
+        # 2. Get the raw list of SearchResult objects
+        raw_results = await retriever.search(query)
     except VectorStoreError as exc:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -64,4 +54,13 @@ async def hybrid_search(
             detail="Search failed unexpectedly",
         )
 
-    return result
+    # 3. Stop the timer and calculate milliseconds
+    latency = round((time.perf_counter() - start_time) * 1000, 2)
+
+    # 4. Construct and return the exact Pydantic model required
+    return HybridResult(
+        query=query.query,
+        results=raw_results,
+        total_retrieved=len(raw_results),
+        latency_ms=latency
+    )

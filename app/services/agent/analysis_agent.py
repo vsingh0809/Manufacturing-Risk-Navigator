@@ -70,35 +70,40 @@ class AnalysisAgent:
             AgentError: If graph execution fails unrecoverably.
         """
         initial_state = {
-            "query": query,
-            "project_name": project_name,
-            "retrieved_chunks": [],
-            "context_truncated": False,
-            "risks": [],
-            "dependencies": [],
-            "milestones": [],
-            "summary": "",
-            "token_usage": TokenUsage(
-                prompt_tokens=0,
-                completion_tokens=0,
-                total_tokens=0,
-            ),
-            "error": None,
-        }
+    "query": query,
+    "project_name": project_name,
+    "retrieved_chunks": [],
+    "context_truncated": False,
+    "risks": [],
+    "dependencies": [],
+    "milestones": [],
+    "summary": "",
+    "token_usage": TokenUsage(
+        prompt_tokens=0,
+        completion_tokens=0,
+        total_tokens=0,
+    ),
+    "error": None,
+}
 
         try:
             final_state = await self._graph.ainvoke(initial_state)
         except Exception as exc:
-            raise AgentError(
-                message="Agent graph execution failed",
-                detail=str(exc),
-            ) from exc
-
-        if final_state.get("error"):
-            logger.error(
-                "Agent completed with error",
-                extra={"error": final_state["error"]},
-            )
+    # ADD this before raise
+         logger.error(
+        "Graph execution failed",
+        extra={
+            "error_type": type(exc).__name__,
+            "error": str(exc),
+            "query": query,
+            "project": project_name,
+        },
+    )
+         raise AgentError(
+        message="Agent graph execution failed",
+        detail=str(exc),   # ← this will now show real cause
+           ) from exc
+            
 
         return RiskReport(
             report_id=str(uuid.uuid4()),
