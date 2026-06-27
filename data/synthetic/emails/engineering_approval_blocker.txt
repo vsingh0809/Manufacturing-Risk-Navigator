@@ -1,0 +1,33 @@
+From: mark.rivera@manufacturingco.com
+To: sarah.chen@manufacturingco.com
+Subject: URGENT — Control Panel Approval Still Pending — Project Titan
+Date: 2024-03-18
+Document Type: Email
+Department: Engineering
+Project: Project Titan
+
+Sarah,
+
+I need to escalate the control panel design approval immediately.
+
+We submitted the revised control panel layout (Drawing #TIT-CP-REV3)
+to the client on March 1. It is now March 18 — 17 days with no
+response. Our standard SLA for design approvals is 10 business days.
+
+The impact of this approval delay is significant:
+1. We cannot place the switchgear order until approved
+2. Switchgear lead time is 6 weeks from order
+3. Without switchgear, electrical installation cannot start
+4. This pushes the commissioning date to August 2024 minimum
+
+The client contact is James Thornton (j.thornton@clientco.com).
+I have copied him on two previous emails with no response.
+
+I am formally requesting escalation to client senior management.
+This is now an APPROVAL_PENDING blocker on the critical path.
+
+If we do not receive approval by March 22, I recommend invoking
+the contract clause 14.3 (Client Delay — Cost Recovery).
+
+Mark Rivera
+Engineering Lead — Project Titan

@@ -115,7 +115,8 @@ class MsMarcoReranker:
                 )
             )
 
-        reranked.sort(key=lambda r: r.rerank_score or 0.0, reverse=True)
+        reranked.sort(key=lambda r: float(r.rerank_score), reverse=True)
+        
 
         logger.info(
             "Reranking complete",

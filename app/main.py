@@ -79,10 +79,24 @@ def create_app() -> FastAPI:
     # ── Middleware ─────────────────────────────────────────────────────────
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Sprint 2: lock to specific origins
+        allow_origins=["*"], 
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    origins = [
+    "http://localhost:3000",  # Your frontend development server
+]
+
+# 2. Add the CORS middleware to the application pipeline
+    app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # Allows requests from localhost:3000
+    allow_credentials=True,           # Allows cookies and authorization headers
+    allow_methods=["*"],              # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],              # Allows all headers (Content-Type, Authorization, etc.)
+)
+
 
     app.add_middleware(RequestTracingMiddleware)
 

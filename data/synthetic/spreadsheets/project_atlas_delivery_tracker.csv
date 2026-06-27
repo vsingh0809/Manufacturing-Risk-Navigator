@@ -1,0 +1,10 @@
+project_name,milestone,planned_date,revised_date,status,supplier,part_number,department,risk_category,notes
+Project Atlas,Foundation Work,2024-02-28,2024-02-28,COMPLETE,N/A,N/A,Engineering,UNKNOWN,Completed on schedule
+Project Atlas,Structural Steel,2024-03-10,2024-03-10,COMPLETE,SteelCo Ltd,SC-1101,Engineering,UNKNOWN,Delivered and installed on time
+Project Atlas,Turbine Delivery,2024-03-20,2024-04-15,DELAYED,BearingTech GmbH,BT-4492,Procurement,DELIVERY_DELAY,Bearing quality hold at supplier
+Project Atlas,Electrical Wiring,2024-03-25,2024-04-20,BLOCKED,ElectroParts,EP-220,Engineering,DEPENDENCY_BLOCKER,Blocked by turbine delivery delay
+Project Atlas,Commissioning,2024-05-01,2024-06-01,AT_RISK,N/A,N/A,Commissioning,DELIVERY_DELAY,Depends on all prior milestones
+Project Titan,Compressor Installation,2024-03-28,2024-04-18,BLOCKED,Precision Parts Co,PP-7721,Engineering,QUALITY_ISSUE,Dimensional inspection failure NCR-2024-031
+Project Titan,Pressure Testing,2024-04-05,2024-04-25,AT_RISK,N/A,N/A,QA,DEPENDENCY_BLOCKER,Blocked by compressor installation
+Project Titan,Control Panel Approval,2024-03-01,2024-03-28,APPROVAL_PENDING,N/A,N/A,Engineering,APPROVAL_PENDING,Client approval overdue 17 days
+Project Zeus,Pump Station Delivery,2024-04-30,2024-04-30,ON_TRACK,GlobalPump Corp,CP-500,Procurement,UNKNOWN,Award pending Procurement Director approval

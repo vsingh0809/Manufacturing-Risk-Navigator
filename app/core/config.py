@@ -40,7 +40,7 @@ class AppSettings(BaseSettings):
      )
     
     embedding_dimension: int = Field(
-    default=768,
+    default=384,
     description="BGE-small output dimension"
 )
 
@@ -64,7 +64,7 @@ class AppSettings(BaseSettings):
         description="OpenAI embedding model name",
     )
     embedding_dimension: int = Field(
-        default=1536,
+        default=384,
         description="Output dimension of the embedding model",
     )
 

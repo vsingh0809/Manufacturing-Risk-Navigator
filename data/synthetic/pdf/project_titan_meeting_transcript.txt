@@ -1,0 +1,54 @@
+PROJECT TITAN — WEEKLY REVIEW MEETING TRANSCRIPT
+Document Type: Meeting Transcript
+Department: Engineering
+Date: 2024-03-18
+Attendees: Sarah Chen (PM), Mark Rivera (Engineering Lead),
+           Priya Patel (Procurement), John Walsh (QA)
+
+MEETING NOTES
+
+Sarah Chen [09:02]:
+Good morning everyone. Let us start with the critical path review.
+Mark, can you give us an update on the compressor installation?
+
+Mark Rivera [09:04]:
+The compressor frame is in place but we have a serious problem.
+The inlet manifold from Precision Parts Co (Supplier Z) has failed
+the dimensional inspection. The tolerance on the flange connection
+is out of spec by 1.8mm. This is a QUALITY ISSUE — we cannot
+proceed with installation until a replacement part arrives.
+
+John Walsh [09:07]:
+QA confirmed the rejection this morning. Part number PP-7721.
+We have issued a Non-Conformance Report (NCR #2024-031).
+Precision Parts Co has been notified. Their response time is
+typically 3-4 weeks for replacement manufacturing.
+
+Priya Patel [09:10]:
+I have already contacted two alternative suppliers.
+FastParts International can deliver a conforming part in 10 days
+but at 40% premium over current contract price.
+We are waiting on approval from the client for the cost variance.
+
+Sarah Chen [09:14]:
+This is now our top risk for Project Titan. The compressor
+installation is on the critical path for the pressure testing
+milestone scheduled for April 5. If we wait for Precision Parts Co,
+we miss that date by 3 weeks minimum.
+
+Mark Rivera [09:16]:
+The electrical team is also waiting on the design change approval
+for the control panel layout. That approval has been pending with
+the client since March 1 — 17 days and counting. Without that
+approval, we cannot order the switchgear components either.
+
+Sarah Chen [09:19]:
+Two blockers on the critical path simultaneously. I will escalate
+both to the client today. Priya, please get written confirmation
+from FastParts International on the 10-day delivery commitment.
+
+ACTION ITEMS
+1. Sarah to escalate compressor part and approval blockers to client
+2. Priya to get written delivery confirmation from FastParts International
+3. Mark to assess whether pressure test can be partially completed
+4. John to send NCR #2024-031 to Precision Parts Co formally

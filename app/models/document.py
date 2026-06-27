@@ -48,7 +48,7 @@ class DocumentMetadata(BaseModel):
     )
     source_type: str = Field(
         ...,
-        description="File type: pdf | spreadsheet | email | transcript | status_report | rfq | text",
+        description="File type: pdf | spreadsheet | email | transcript | status_report | rfq | text|txt",
     )
 
     # ── File ──────────────────────────────────────────────────────────────────
@@ -126,6 +126,7 @@ class DocumentMetadata(BaseModel):
             "status_report",
             "rfq",
             "text",
+            "txt",
         }
         lower = value.lower()
         if lower not in valid:
