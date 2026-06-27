@@ -1,0 +1,40 @@
+From: procurement@bearingtech-gmbh.de
+To: priya.patel@manufacturingco.com
+Subject: RE: Urgent — Project Atlas Bearing Shipment BT-4492
+Date: 2024-03-13
+Document Type: Email
+Department: Procurement
+Project: Project Atlas
+Supplier: BearingTech GmbH
+
+Dear Ms Patel,
+
+We regret to inform you that the shipment of 24 high-precision
+bearings (Part #BT-4492) for Project Atlas has been placed on
+a quality hold at our manufacturing facility in Stuttgart.
+
+During final inspection, our QA team identified dimensional
+variance in 8 of the 24 units. The bearings do not meet the
+tolerance specification of ±0.005mm required by your order.
+
+We are currently reworking the affected units. Our revised
+delivery schedule is as follows:
+- Rework completion: March 28, 2024
+- Final QA inspection: April 3, 2024
+- Dispatch from Stuttgart: April 5, 2024
+- Estimated arrival at your facility: April 8, 2024
+
+We understand the critical nature of this component for your
+project timeline and sincerely apologise for the disruption.
+We are prioritising this order above all other production work.
+
+As per our contract terms, we acknowledge liability for
+reasonable delay-related costs up to EUR 50,000.
+
+Please contact me directly if you require further information.
+
+Kind regards,
+Klaus Weber
+Head of Export Operations
+BearingTech GmbH
++49 711 4892 301

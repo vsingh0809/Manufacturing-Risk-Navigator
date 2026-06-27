@@ -1,0 +1,7 @@
+supplier_name,project_name,risk_category,severity,description,part_number,contract_value_usd,mitigation,status
+BearingTech GmbH,Project Atlas,DELIVERY_DELAY,HIGH,Quality hold delaying bearing shipment 26 days,BT-4492,240000,Daily contact + expedite request,OPEN
+Precision Parts Co,Project Titan,QUALITY_ISSUE,CRITICAL,Inlet manifold failed dimensional inspection NCR-2024-031,PP-7721,85000,FastParts International as alternate supplier,OPEN
+FlowTech Solutions,Project Zeus,DELIVERY_DELAY,MEDIUM,Cannot meet April 30 delivery — 15 day shortfall,CP-500,480000,Disqualified from RFQ — GlobalPump selected,CLOSED
+PumpMaster Inc,Project Zeus,SUPPLIER_RISK,LOW,2 minor NCRs in recent quality audit,CP-500,520000,Designated backup supplier,MONITORING
+ElectroParts,Project Atlas,DEPENDENCY_BLOCKER,HIGH,Electrical parts blocked pending turbine delivery,EP-220,95000,Pre-stage materials at site,OPEN
+SteelCo Ltd,Project Atlas,UNKNOWN,LOW,No issues — delivered on schedule,SC-1101,180000,N/A,CLOSED

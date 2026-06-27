@@ -17,7 +17,7 @@ def mock_settings() -> AppSettings:
         qdrant_url="http://localhost:6333",
         qdrant_api_key="test-qdrant-key",
         qdrant_collection_name="test_collection",
-        embedding_dimension=1536,
+        embedding_dimension=384,
         chunk_size=512,
         chunk_overlap=64,
     )

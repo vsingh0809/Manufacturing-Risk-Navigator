@@ -96,18 +96,18 @@ async def ingest_file(
     except UnsupportedFileTypeError as exc:
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            detail=exc.message,
+            detail=f"{exc.message}: {exc.detail}",
         )
     except IngestionError as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=exc.message,
+            detail=f"{exc.message}: {exc.detail}",
         )
     except Exception as exc:
         logger.error("Unexpected ingestion error", extra={"error": str(exc)})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ingestion failed unexpectedly",
+            detail=f"{exc.message}: {exc.detail}",
         )
     finally:
         # [WHY] Always delete temp file — never leak disk space.

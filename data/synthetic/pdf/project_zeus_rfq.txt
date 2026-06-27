@@ -1,0 +1,49 @@
+REQUEST FOR QUOTATION — PROJECT ZEUS
+Document Type: RFQ
+Department: Procurement
+Date: 2024-03-10
+Milestone: Pump Station Delivery
+
+RFQ REFERENCE: RFQ-2024-ZEUS-007
+PROJECT: Zeus Industrial Pump Station
+REQUIRED DELIVERY: April 30, 2024
+
+SCOPE OF SUPPLY
+Item 1: High-pressure centrifugal pumps (x4) — Model CP-500
+Item 2: Pump control panels (x4) — 480V, 3-phase
+Item 3: Interconnecting pipework and fittings
+Item 4: Vibration isolation mountings
+
+SUPPLIER EVALUATION CRITERIA
+- Delivery reliability: 40% weighting
+- Price: 30% weighting
+- Quality certification (ISO 9001): 20% weighting
+- After-sales support: 10% weighting
+
+RESPONSES RECEIVED
+
+FlowTech Solutions:
+- Price: USD 480,000
+- Delivery: 45 days from order (MISSES deadline by 15 days)
+- ISO 9001: Certified
+- Risk: DELIVERY DELAY — cannot meet April 30 requirement
+
+PumpMaster Inc:
+- Price: USD 520,000
+- Delivery: 35 days from order (meets deadline with 10-day buffer)
+- ISO 9001: Certified
+- Risk: SUPPLIER RISK — recent quality audit flagged 2 minor NCRs
+
+GlobalPump Corp:
+- Price: USD 395,000
+- Delivery: 30 days from order (meets deadline with 15-day buffer)
+- ISO 9001: Certified
+- Risk: LOW — no recent quality issues, strong delivery track record
+
+RECOMMENDATION
+Award to GlobalPump Corp subject to contract review.
+PumpMaster Inc as backup supplier if GlobalPump capacity unavailable.
+FlowTech Solutions disqualified due to inability to meet delivery date.
+
+APPROVAL PENDING
+Procurement Director sign-off required before award.
