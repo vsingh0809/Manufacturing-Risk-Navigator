@@ -23,15 +23,14 @@ import logging
 from datetime import UTC, datetime
 from pathlib import Path
 
-from datasets import Dataset
 from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
-from ragas import evaluate
+from ragas import EvaluationDataset, SingleTurnSample, evaluate
 from ragas.metrics import (
-    answer_relevancy,
-    context_precision,
-    context_recall,
-    faithfulness,
+    AnswerRelevancy,
+    ContextPrecision,
+    ContextRecall,
+    Faithfulness,
 )
 
 from app.core.config import get_settings
@@ -103,14 +102,22 @@ EVAL_QUESTIONS = [
 ]
 
 
-async def _build_retriever() -> HybridRetriever:
-    """Build HybridRetriever for eval — mirrors dependencies.py."""
-    settings = get_settings()
+async def _build_retriever(settings) -> HybridRetriever:
+    from langchain_huggingface import HuggingFaceEmbeddings
 
     factory = QdrantClientFactory(settings=settings)
     await factory.connect()
 
-    embedder = DocumentEmbedder(settings=settings)
+    # [WHY] ragas_eval runs as standalone CLI process.
+    # Must build its own embeddings instance —
+    # cannot share the app singleton from dependencies.py
+    embeddings = HuggingFaceEmbeddings(
+        model_name=settings.embedding_model,
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"normalize_embeddings": True},
+    )
+
+    embedder = DocumentEmbedder(embeddings=embeddings)  # ← correct signature
     reranker = MsMarcoReranker()
 
     return HybridRetriever(
@@ -193,12 +200,16 @@ async def _run_eval(output_path: Path) -> dict:
         )
 
     # ── RAGAS Dataset ──────────────────────────────────────────────────────
-    eval_dataset = Dataset.from_dict({
-        "question": questions,
-        "answer": answers,
-        "contexts": contexts,
-        "ground_truth": ground_truths,
-    })
+    samples = [
+    SingleTurnSample(
+        user_input=q,
+        response=a,
+        retrieved_contexts=c,
+        reference=g,
+    )
+    for q, a, c, g in zip(questions, answers, contexts, ground_truths)
+]
+    eval_dataset = EvaluationDataset(samples=samples)
 
     # ── RAGAS LLM + Embeddings ─────────────────────────────────────────────
     # [WHY] RAGAS uses its own LLM and embeddings for metric computation.
@@ -221,28 +232,26 @@ async def _run_eval(output_path: Path) -> dict:
 
     try:
         result = evaluate(
-            dataset=eval_dataset,
-            metrics=[
-                faithfulness,
-                answer_relevancy,
-                context_precision,
-                context_recall,
-            ],
-            llm=ragas_llm,
-            embeddings=ragas_embeddings,
-        )
+        dataset=eval_dataset,
+        metrics=[
+        Faithfulness(llm=ragas_llm),
+        AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings),
+        ContextPrecision(llm=ragas_llm),
+        ContextRecall(llm=ragas_llm),
+    ],
+)
     except Exception as exc:
         logger.error("RAGAS evaluation failed", extra={"error": str(exc)})
         raise
 
     scores = {
-        "faithfulness": round(float(result["faithfulness"]), 4),
-        "answer_relevancy": round(float(result["answer_relevancy"]), 4),
-        "context_precision": round(float(result["context_precision"]), 4),
-        "context_recall": round(float(result["context_recall"]), 4),
-        "evaluated_at": datetime.now(UTC).isoformat(),
-        "question_count": len(EVAL_QUESTIONS),
-    }
+    "faithfulness": round(float(result.scores["faithfulness"]), 4),
+    "answer_relevancy": round(float(result.scores["answer_relevancy"]), 4),
+    "context_precision": round(float(result.scores["context_precision"]), 4),
+    "context_recall": round(float(result.scores["context_recall"]), 4),
+    "evaluated_at": datetime.now(UTC).isoformat(),
+    "question_count": len(EVAL_QUESTIONS),
+}
 
     # ── Write results ──────────────────────────────────────────────────────
     output_path.parent.mkdir(parents=True, exist_ok=True)

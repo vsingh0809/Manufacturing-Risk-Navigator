@@ -85,10 +85,8 @@ def create_app() -> FastAPI:
     )
 
     origins = [
-    "http://localhost:3000",  # Your frontend development server
+    "http://localhost:3000",  
 ]
-
-# 2. Add the CORS middleware to the application pipeline
     app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,            # Allows requests from localhost:3000
