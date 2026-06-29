@@ -32,6 +32,7 @@ dependencies = [
    "ragas>=0.4.3",
    "datasets>=5.0.0",
    "dill>=0.4.1",
+   "langsmith>=0.9.3",
 ]
 [build-system]
 requires = ["hatchling"]

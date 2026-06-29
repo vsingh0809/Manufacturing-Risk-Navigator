@@ -13,6 +13,8 @@ import logging
 
 from fastembed import SparseTextEmbedding
 from qdrant_client import AsyncQdrantClient
+from langsmith import traceable
+
 from qdrant_client.models import (
     FieldCondition,
     Filter,
@@ -43,6 +45,12 @@ class HybridRetriever:
     One class. One query. No custom fusion code.
     Reranker applied after Qdrant returns fused candidates.
     """
+
+    @traceable(
+        name="hybrid_search",
+        run_type="retriever",
+        tags=["retrieval", "qdrant"],
+    )
 
     def __init__(
         self,
