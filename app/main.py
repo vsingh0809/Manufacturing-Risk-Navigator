@@ -39,7 +39,7 @@ async def lifespan(app: FastAPI):
     """
     settings = get_settings()
     setup_logging(settings.log_level)
-    setup_tracing(service_name="manufacturing-risk-navigator")
+    setup_tracing(settings=settings)
 
     logger.info(
         "Starting Manufacturing Risk Navigator",
