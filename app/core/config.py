@@ -43,10 +43,23 @@ class AppSettings(BaseSettings):
     default=384,
     description="BGE-small output dimension"
 )
-
-
-
-
+    # ADD these fields
+    langchain_tracing: bool = Field(
+    default=False,
+    description="Enable LangSmith tracing",
+)
+    langchain_api_key: str | None = Field(
+    default=None,
+    description="LangSmith API key",
+)
+    langchain_project: str = Field(
+    default="manufacturing-risk-navigator",
+    description="LangSmith project name",
+)
+    langchain_endpoint: str = Field(
+    default="https://api.smith.langchain.com",
+    description="LangSmith endpoint",
+)
    
     # ── Qdrant ────────────────────────────────────────────────────────────────
     qdrant_url: str = Field(..., description="Qdrant Cloud cluster URL")
